@@ -4,7 +4,9 @@
 	align-items: center;
 	margin: 5px 0;
 }
+
 .buildControl button {
+	display: block;
 	font: inherit;
 	padding: 5px;
 	margin: 0 5px;
@@ -13,22 +15,26 @@
 	cursor: pointer;
 	outline: none;
 }
+
 .buildControl button:disabled {
 	background-color: darkgrey;
 	border: 1px solid black;
 	color: white;
 	cursor: default;
 }
+
 .buildControl button:hover:disabled {
 	background-color: darkgrey;
 	color: white;
 	cursor: not-allowed;
 }
+
 .label {
 	padding: 10px;
 	font-weight: bold;
 	width: 80px;
 }
+
 .add {
 	background-color: #ff1493;
 	color: white;

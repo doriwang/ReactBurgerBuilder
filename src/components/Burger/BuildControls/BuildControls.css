@@ -6,7 +6,7 @@
 	align-items: center;
 	box-shadow: 0 2px 1px #ccc;
 	margin: auto;
-	padding: 10px;
+	padding: 10px 0;
 	position: fixed;
 	bottom: 0;
 	left: 0;
@@ -27,4 +27,19 @@
 	cursor: not-allowed;
 	border: 1px solid #ccc;
 	color: #888888;
+}
+
+.checkoutButton:not(:disabled) {
+	animation: enable 0.3s linear;
+}
+@keyframes enable {
+	0% {
+		transform: scale(1);
+	}
+	60% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
