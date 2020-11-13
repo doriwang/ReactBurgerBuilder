@@ -23,7 +23,7 @@ const BuildControls = (props) => {
 			<h3>{`Total Price: $${props.totalPrice}`}</h3>
 			<button
 				className='checkoutButton'
-				disabled={!props.purchaseable}
+				disabled={!props.purchasable}
 				onClick={props.checkout}
 			>
 				Checkout

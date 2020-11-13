@@ -21,7 +21,7 @@ class BurgerBuilder extends Component {
 			meat: 0,
 		},
 		totalPrice: 3,
-		purchaseable: false,
+		purchasable: false,
 		checkout: false,
 	};
 
@@ -33,7 +33,7 @@ class BurgerBuilder extends Component {
 			.reduce((sum, el) => {
 				return sum + el;
 			}, 0);
-		this.setState({ purchaseable: sum > 0 });
+		this.setState({ purchasable: sum > 0 });
 	}
 
 	checkoutHandler = () => {
@@ -102,7 +102,7 @@ class BurgerBuilder extends Component {
 					removeIngredients={this.removeIngredients}
 					disableRemoveIg={disableRemoveIg}
 					totalPrice={this.state.totalPrice.toFixed(2)}
-					purchaseable={this.state.purchaseable}
+					purchasable={this.state.purchasable}
 					checkout={this.checkoutHandler}
 				/>
 			</Aux>
