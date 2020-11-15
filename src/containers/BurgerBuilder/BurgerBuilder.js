@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import axios from '../../axios-orders';
+
 import Burger from '../../components/Burger/Burger';
 import Aux from '../../hoc/Aux';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import WithErrHandler from '../../hoc/withErrHandler/WithErrHandler';
 
 const ingredientPricesList = {
 	salad: 1,
@@ -14,17 +18,20 @@ const ingredientPricesList = {
 
 class BurgerBuilder extends Component {
 	state = {
-		ingredients: {
-			salad: 0,
-			bacon: 0,
-			cheese: 0,
-			meat: 0,
-		},
+		ingredients: null, // can be altered in firebase
 		totalPrice: 3,
 		purchasable: false,
 		checkout: false,
+		loading: false,
+		errMsg: false,
 	};
 
+	componentDidMount() {
+		axios
+			.get('/ingredients.json')
+			.then((res) => this.setState({ ingredients: res.data }))
+			.catch((error) => this.setState({ errMsg: true }));
+	}
 	updatePurchaseState(ingredients) {
 		const sum = Object.keys(ingredients)
 			.map((igKey) => {
@@ -45,7 +52,26 @@ class BurgerBuilder extends Component {
 	};
 
 	continueCheckoutState = () => {
-		alert('continue checkout');
+		this.setState({ loading: true });
+		// alert('continue checkout');
+		// firebase uses json form of data
+		const order = {
+			ingredients: this.state.ingredients,
+			price: this.state.totalPrice,
+			customer: {
+				name: 'Dori',
+				phone: '123-123-1234',
+			},
+			orderType: 'pickup',
+		};
+		axios
+			.post('/orders.json', order)
+			.then((res) => {
+				console.log(res), this.setState({ loading: false, checkout: false });
+			})
+			.catch((error) => {
+				console.log(error), this.setState({ loading: false, checkout: false });
+			});
 	};
 
 	addIngredients = (type) => {
@@ -86,28 +112,49 @@ class BurgerBuilder extends Component {
 		for (let value in disableRemoveIg) {
 			disableRemoveIg[value] = disableRemoveIg[value] <= 0;
 		}
+
+		let orderSummary = null;
+		let burger = this.state.errMsg ? (
+			<p>Ingredients cannot be loaded...</p>
+		) : (
+			<Spinner />
+		);
+		if (this.state.ingredients) {
+			burger = (
+				<Aux>
+					<Burger ingredients={this.state.ingredients} />
+					<BuildControls
+						addIngredients={this.addIngredients}
+						removeIngredients={this.removeIngredients}
+						disableRemoveIg={disableRemoveIg}
+						totalPrice={this.state.totalPrice.toFixed(2)}
+						purchasable={this.state.purchasable}
+						checkout={this.checkoutHandler}
+					/>
+				</Aux>
+			);
+			orderSummary = (
+				<OrderSummary
+					ingredients={this.state.ingredients}
+					continueCheckout={this.continueCheckoutState}
+					cancelCheckout={this.resetCheckoutState}
+					totalPrice={this.state.totalPrice.toFixed(2)}
+				/>
+			);
+		}
+		if (this.state.loading) {
+			orderSummary = <Spinner />;
+		}
+
 		return (
 			<Aux>
 				<Modal show={this.state.checkout} closeModal={this.resetCheckoutState}>
-					<OrderSummary
-						ingredients={this.state.ingredients}
-						continueCheckout={this.continueCheckoutState}
-						cancelCheckout={this.resetCheckoutState}
-						totalPrice={this.state.totalPrice.toFixed(2)}
-					/>
+					{orderSummary}
 				</Modal>
-				<Burger ingredients={this.state.ingredients} />
-				<BuildControls
-					addIngredients={this.addIngredients}
-					removeIngredients={this.removeIngredients}
-					disableRemoveIg={disableRemoveIg}
-					totalPrice={this.state.totalPrice.toFixed(2)}
-					purchasable={this.state.purchasable}
-					checkout={this.checkoutHandler}
-				/>
+				{burger}
 			</Aux>
 		);
 	}
 }
 
-export default BurgerBuilder;
+export default WithErrHandler(BurgerBuilder, axios);

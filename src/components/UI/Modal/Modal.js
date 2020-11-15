@@ -4,10 +4,13 @@ import Backdrop from '../Backdrop/Backdrop';
 import './Modal.css';
 
 class Modal extends Component {
+	// improve performance, re-rendering and update only if
 	shouldComponentUpdate(nextProps, nextState) {
-		return nextProps.show !== this.props.show;
+		return (
+			nextProps.show !== this.props.show ||
+			nextProps.children !== this.props.children
+		);
 	}
-
 	componentDidUpdate() {
 		console.log('modal updates');
 	}
