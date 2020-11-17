@@ -7,7 +7,6 @@ import './Toolbar.css';
 const Toolbar = (props) => {
 	return (
 		<header className='toolbar'>
-			{/* <div onClick={props.openSidebar}>MENU</div> */}
 			<SidebarToggle clicked={props.sidebarToggle} />
 			<Logo height='80%' />
 			<nav className='deskTopOnly'>

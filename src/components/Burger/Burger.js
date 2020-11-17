@@ -1,6 +1,6 @@
 import React from 'react';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
-import './Burger.css';
+import classes from './Burger.module.css';
 
 const Burger = (props) => {
 	// burger receiving ingredients props from burgerBuilder.js, which is an object and can't be mapped, therefore we need to transform it into an array to be mapped.
@@ -22,7 +22,7 @@ const Burger = (props) => {
 	}
 
 	return (
-		<div className='burger'>
+		<div className={classes.burger}>
 			<BurgerIngredient type='bread-top' />
 			{transformedIngredients}
 			<BurgerIngredient type='bread-bottom' />

@@ -27,6 +27,7 @@ class BurgerBuilder extends Component {
 	};
 
 	componentDidMount() {
+		console.log(this.props);
 		axios
 			.get('/ingredients.json')
 			.then((res) => this.setState({ ingredients: res.data }))
@@ -52,26 +53,25 @@ class BurgerBuilder extends Component {
 	};
 
 	continueCheckoutState = () => {
-		this.setState({ loading: true });
-		// alert('continue checkout');
-		// firebase uses json form of data
-		const order = {
-			ingredients: this.state.ingredients,
-			price: this.state.totalPrice,
-			customer: {
-				name: 'Dori',
-				phone: '123-123-1234',
-			},
-			orderType: 'pickup',
-		};
-		axios
-			.post('/orders.json', order)
-			.then((res) => {
-				console.log(res), this.setState({ loading: false, checkout: false });
-			})
-			.catch((error) => {
-				console.log(error), this.setState({ loading: false, checkout: false });
-			});
+		// =====================================
+		// this.props.history.push('/checkout');
+		// push the page/component to the stack
+		// =====================================
+		const queryParams = [];
+		for (let i in this.state.ingredients) {
+			queryParams.push(
+				encodeURIComponent(i) +
+					'=' +
+					encodeURIComponent(this.state.ingredients[i]),
+			);
+		}
+		queryParams.push('price=' + this.state.totalPrice);
+		const queryString = queryParams.join('&');
+		this.props.history.push({
+			pathname: '/checkout',
+			search: '?' + queryString,
+		});
+		// output /checkout?bacon=1&cheese=1&meat=1&salad=1
 	};
 
 	addIngredients = (type) => {
