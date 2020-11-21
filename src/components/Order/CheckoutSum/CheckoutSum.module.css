@@ -9,3 +9,9 @@
 		width: 500px;
 	}
 }
+
+@media (min-width: 601px) {
+	.CheckoutSum {
+		width: 80%;
+	}
+}

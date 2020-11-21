@@ -47,7 +47,7 @@ class CheckoutPage extends Component {
 						<ContactInfo
 							ingredients={this.state.ingredients}
 							totalPrice={this.state.totalPrice}
-							{...props} // because render it doesn't get the history but ... will get all the props and pass them down. or wrap the whole CheckoutPage with withRouter()
+							{...props} // because render it doesn't get the history but ... spread will get all the props and pass them down. or wrap the whole CheckoutPage with withRouter()
 						/>
 					)}
 				/>
