@@ -1,13 +1,9 @@
-import * as actionTypes from './actions';
+import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
-	ingredients: {
-		salad: 0,
-		bacon: 0,
-		cheese: 0,
-		meat: 0,
-	},
+	ingredients: null,
 	totalPrice: 3,
+	error: false,
 };
 
 const INGREDIENT_PRICE = {
@@ -17,7 +13,7 @@ const INGREDIENT_PRICE = {
 	bacon: 1.5,
 };
 
-const reducer = (state = initialState, action) => {
+const BurgerBuilderReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case actionTypes.ADD_INGREDIENT:
 			return {
@@ -25,7 +21,7 @@ const reducer = (state = initialState, action) => {
 				ingredients: {
 					// creating a copy of the initialState ingredients
 					...state.ingredients, // cloning deeply on the individual object
-					// payload: point to this ingredient and alter quantity and price
+					// payload: point to this ingredient and alter quantity and price; [] indicate the property is a variable and can be any ingredientName
 					[action.ingredientName]: state.ingredients[action.ingredientName] + 1,
 				},
 				totalPrice: state.totalPrice + INGREDIENT_PRICE[action.ingredientName],
@@ -39,9 +35,26 @@ const reducer = (state = initialState, action) => {
 				},
 				totalPrice: state.totalPrice - INGREDIENT_PRICE[action.ingredientName],
 			};
+		case actionTypes.SET_INGREDIENTS:
+			return {
+				...state,
+				ingredients: {
+					salad: action.ingredients.salad,
+					bacon: action.ingredients.bacon,
+					cheese: action.ingredients.cheese,
+					meat: action.ingredients.meat,
+				},
+				totalPrice: 3,
+				error: false, // reset error state
+			};
+		case actionTypes.FETCH_INGREDIENTS_FAILED:
+			return {
+				...state,
+				error: true,
+			};
 		default:
 			return state;
 	}
 };
 
-export default reducer;
+export default BurgerBuilderReducer;
