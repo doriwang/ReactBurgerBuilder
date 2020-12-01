@@ -4,11 +4,15 @@ import Modal from '../../components/UI/Modal/Modal';
 
 const WithErrHandler = (WrappedComponent, axios) => {
 	return class extends Component {
-		state = {
-			error: null,
-		};
+		constructor(props) {
+			super(props);
+			this.state = { error: null };
+		}
+		// state = {
+		// 	error: null,
+		// };
 		// will execute before component mounts vs DidMount which execute after components mount
-		componentWillMount() {
+		componentDidMount() {
 			this.reqInterceptors = axios.interceptors.request.use((req) => {
 				this.setState({ error: null });
 				return req;
@@ -20,6 +24,7 @@ const WithErrHandler = (WrappedComponent, axios) => {
 				},
 			);
 		}
+		component;
 		// above interceptors instance will be called every time when WithErrHandler is called, which creates multiple instances and can cause errors or memory leaks. This will prevent such issues.
 		componentWillUnmount() {
 			axios.interceptors.request.eject(this.reqInterceptors);

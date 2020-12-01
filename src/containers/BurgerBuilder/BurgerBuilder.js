@@ -9,7 +9,7 @@ import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import WithErrHandler from '../../hoc/withErrHandler/WithErrHandler';
-import * as actionTypes from '../../store/actions';
+import * as actions from '../../store/actions/index'; // can omit index
 
 class BurgerBuilder extends Component {
 	state = {
@@ -17,8 +17,8 @@ class BurgerBuilder extends Component {
 		// totalPrice: 3,
 		// purchasable: false,
 		checkout: false,
-		loading: false,
-		errMsg: false,
+		// loading: false,
+		// errMsg: false,
 	};
 
 	componentDidMount() {
@@ -27,6 +27,7 @@ class BurgerBuilder extends Component {
 		// 	.get('/ingredients.json')
 		// 	.then((res) => this.setState({ ingredients: res.data }))
 		// 	.catch((error) => this.setState({ errMsg: true }));
+		this.props.getInitIngredients();
 	}
 
 	updatePurchasableState(ingredients) {
@@ -49,6 +50,7 @@ class BurgerBuilder extends Component {
 	};
 
 	continueCheckoutState = () => {
+		this.props.initPurchase();
 		this.props.history.push('/checkout');
 	};
 
@@ -61,7 +63,7 @@ class BurgerBuilder extends Component {
 		}
 
 		let orderSummary = null;
-		let burger = this.state.errMsg ? (
+		let burger = this.props.error ? (
 			<p>Ingredients cannot be loaded...</p>
 		) : (
 			<Spinner />
@@ -71,8 +73,8 @@ class BurgerBuilder extends Component {
 				<Aux>
 					<Burger ingredients={this.props.igs} />
 					<BuildControls
-						addIngredients={this.props.addIgs} // takes in igName from BuildControls component
-						removeIngredients={this.props.removeIgs}
+						addIngredients={this.props.addIngredient} // takes in igName from BuildControls component
+						removeIngredients={this.props.removeIngredient}
 						disableRemoveIg={disableRemoveIg}
 						totalPrice={this.props.price}
 						purchasable={this.updatePurchasableState(this.props.igs)}
@@ -89,9 +91,6 @@ class BurgerBuilder extends Component {
 				/>
 			);
 		}
-		if (this.state.loading) {
-			orderSummary = <Spinner />;
-		}
 
 		return (
 			<Aux>
@@ -106,17 +105,27 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		igs: state.ingredients, // get the ingredients from state in redux
-		price: state.totalPrice.toFixed(2),
+		igs: state.burgerBuilder.ingredients, // get the ingredients from state in redux
+		price: state.burgerBuilder.totalPrice.toFixed(2),
+		error: state.burgerBuilder.error,
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
+	// this is the stage1 code before action creators which it passes the type and the ingredientName
+	// return {
+	// 	addIngredient: (igName) =>
+	// 		dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName: igName }),
+	// 	removeIngredient: (igName) =>
+	// 		dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientName: igName }),
+	// };
+
+	// stage2 with action creators which type and the ingredientName is defined in the actions/burgerBuilder file
 	return {
-		addIgs: (igName) =>
-			dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName: igName }),
-		removeIgs: (igName) =>
-			dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientName: igName }),
+		addIngredient: (igName) => dispatch(actions.addIngredient(igName)),
+		removeIngredient: (igName) => dispatch(actions.removeIngredient(igName)),
+		getInitIngredients: () => dispatch(actions.getInitIngredients()),
+		initPurchase: () => dispatch(actions.purchaseInit()),
 	};
 };
 
